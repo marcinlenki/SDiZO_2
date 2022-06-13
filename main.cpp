@@ -1,24 +1,37 @@
 #include <iostream>
+#include "AdjacencyList.h"
+
 using namespace std;
 
-int *createArray(int);
+const char * FILE_PATH = "/Users/marcinlenkiewicz/Desktop/Studia/SDiZO/Projekt_2/dane.txt";
+
+int licz(int& liczba) {
+    liczba = 10;
+
+    return 20;
+}
 
 int main() {
-    int* arr = createArray(10);
+    AdjacencyList* adjacencyList = new AdjacencyList;
+    AdjacencyList* MST = new AdjacencyList;
 
-    for (int i = 0; i < 10; i++)
-        cout<<arr[i];
+    adjacencyList->makeFromFile(FILE_PATH, false);
+//    adjacencyList->generateRandomGraph(6, 50);
+
+//    adjacencyList->show();
+
+    adjacencyList->primAdjacencyList(MST, 0);
+
+    cout<<endl<<endl;
+
+    MST->show();
 
 
-    delete [] arr;
+
+
+
+    delete adjacencyList;
+    delete MST;
     return 0;
 }
 
-int *createArray(int n) {
-    int* newArr = new int[10];
-
-    for (int i = 0; i < 10; i ++)
-        newArr[i] = n;
-
-    return newArr;
-}
