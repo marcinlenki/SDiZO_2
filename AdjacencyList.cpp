@@ -1,6 +1,12 @@
 #include "AdjacencyList.h"
 using namespace std;
 
+EdgeAdjacencyList::EdgeAdjacencyList(int srcVertex, int destVertex, int edgeWeight) {
+    this->srcVertex = srcVertex;
+    this->destVertex = destVertex;
+    this->edgeWeight = edgeWeight;
+}
+
 AdjacencyList::AdjacencyList() {
     this->verticesNum = 0;
     this->edgesNum = 0;
@@ -62,6 +68,11 @@ void AdjacencyList::clear() {
 }
 
 void AdjacencyList::show() {
+    if (verticesNum == 0) {
+        cout<<"Lista jest pusta."<<endl;
+        return;
+    }
+
     cout<<"Liczba wierzchołków: " << verticesNum << endl;
     cout<<"Liczba krawędzi: " << edgesNum << endl;
 
@@ -103,8 +114,6 @@ void AdjacencyList::generateRandomGraph(int vertices, int density, bool isDirect
 
         edges--;
     }
-    cout<<"aaa"<<endl;
-    int d = 1;
 //    while(edges-- > 0) {
 //        cout<<d++<<endl;
 //        randW = rand() % MAX_WEIGHT + 1;
@@ -147,7 +156,10 @@ void AdjacencyList::generateRandomGraph(int vertices, int density, bool isDirect
     }
 }
 
-void AdjacencyList::djikstraAdjacencyList(int start) {
+bool AdjacencyList::djikstraAdjacencyList(int start) {
+    if (start >= verticesNum)
+        return false;
+
     bool* alreadyVisited = new bool [verticesNum];
     int* d = new int[verticesNum];
     int* p = new int[verticesNum];
@@ -197,9 +209,13 @@ void AdjacencyList::djikstraAdjacencyList(int start) {
     delete [] alreadyVisited;
     delete [] d;
     delete [] p;
+    return true;
 }
 
 bool AdjacencyList::bellmanFordAdjacencyList(int start) {
+    if (start >= verticesNum)
+        return false;
+
     int* d = new int[verticesNum];
     int* p = new int[verticesNum];
     bool changeOccurred = true;
@@ -233,12 +249,6 @@ bool AdjacencyList::bellmanFordAdjacencyList(int start) {
         }
     }
 
-//    for(int i = 0; i < verticesNum; i++)
-//        cout<<d[i]<<endl;
-//
-//    for(int i = 0; i < verticesNum; i++)
-//        cout<<p[i]<<endl;
-
     cout<<"-----------------------------------------------------------"<<endl;
     cout<<"\t\t\t\tWierzchołek startowy: "<<start<<endl;
     cout<<"-----------------------------------------------------------"<<endl;
@@ -259,31 +269,10 @@ bool AdjacencyList::bellmanFordAdjacencyList(int start) {
     return true;
 }
 
-int AdjacencyList::findMin(const int *arr, const bool* visited, int length) {
-    int min = MAX_INT, minVertexNum;
-
-    for(int i = 0; i < length; i++) {
-        if(arr[i] < min && !visited[i]) {
-            min = arr[i];
-            minVertexNum = i;
-        }
-    }
-
-    return minVertexNum;
-}
-
-void AdjacencyList::findPath(const int *arr, int vertex) {
-    int p = arr[vertex];
-
-    if (p != -1) {
-        findPath(arr, p);
-    }
-
-    cout<<vertex<<" ";
-}
-
-
 int AdjacencyList::primAdjacencyList(AdjacencyList* &A, int start) {
+    if (start >= verticesNum)
+        return -1;
+
     A->verticesNum = verticesNum;
     A->edgesNum = verticesNum - 1;
     A->adj = new List[verticesNum];
@@ -291,7 +280,7 @@ int AdjacencyList::primAdjacencyList(AdjacencyList* &A, int start) {
     bool* alreadyVisited = new bool [verticesNum];
     int* keys = new int[verticesNum];
     int* p = new int[verticesNum];
-    int visitedVerNum = 0, MST = 0, vSrc, vDst, w;
+    int visitedVerNum = 0, MST = 0, vSrc, vDst, W;
 
     for(int i = 0; i < verticesNum; i++) {
         alreadyVisited[i] = false;
@@ -318,13 +307,17 @@ int AdjacencyList::primAdjacencyList(AdjacencyList* &A, int start) {
         }
     }
 
+    for(int i = 0; i < verticesNum; i++) {
+        MST += keys[i];
+    }
+
     for(int i = 1; i < verticesNum; i++) {
         vSrc = i;
         vDst = p[i];
-        w = keys[i];
+        W = keys[i];
 
-        A->adj[vSrc].addEnd(vDst, w);
-        A->adj[vDst].addEnd(vSrc, w);
+        A->adj[vSrc].addEnd(vDst, W);
+        A->adj[vDst].addEnd(vSrc, W);
     }
 
     delete [] alreadyVisited;
@@ -333,3 +326,116 @@ int AdjacencyList::primAdjacencyList(AdjacencyList* &A, int start) {
 
     return MST;
 }
+
+// Dokończyć
+int AdjacencyList::kruskalAdjacencyList(AdjacencyList *&MST_G) {
+    MST_G->verticesNum = verticesNum;
+    MST_G->edgesNum = verticesNum - 1;
+    MST_G->adj = new List[verticesNum];
+
+    int *groups = new int [verticesNum];
+    auto** edges = new EdgeAdjacencyList * [edgesNum];
+    int MST = 0, vSrc, vDst, w, eNum = 0;
+
+    //MAKE-SET
+    for(int i = 0; i < verticesNum; i++) {
+        groups[i] = i;
+    }
+
+    for(int j = 0; j < verticesNum; j++) {
+        for(int k = 0; k < adj[j].listSize; k++) {
+            List::Edge* le = adj[j].get(k);
+            vSrc = j;
+            vDst = le->destVertex;
+            w = le->edgeWeight;
+
+            if(vSrc < vDst) {
+                auto* e = new EdgeAdjacencyList(vSrc, vDst, w);
+                edges[eNum++] = e;
+            }
+        }
+    }
+
+
+    for(int i = 0; i < edgesNum; i++) {
+        for(int j = 1; j < edgesNum - i; j++) {
+            if(edges[j-1]->edgeWeight > edges[j]->edgeWeight) {
+                swap(edges[j-1], edges[j]);
+            }
+        }
+    }
+
+//    for(int j = 0; j < edgesNum; j++) {
+//        auto* e = edges[j];
+//
+//        cout<<"vSrc = "<<e->srcVertex + 1 <<", vDsc = "<<e->destVertex+ 1<<", w: "<< e->edgeWeight<<endl;
+//    }
+
+
+
+
+    for(int i = 0; i < edgesNum; i++) {
+
+//        for(int j = 0; j < verticesNum; j++)
+//            cout<<groups[j]<<endl;
+
+        auto* e = edges[i];
+
+//        cout<<"vSrc = "<<e->srcVertex<<", vDsc = "<<e->destVertex<<", w: "<< e->edgeWeight<<endl;
+        //FIND-SET(u) != FIND_SET(v)
+        if(groups[e->srcVertex] != groups[e->destVertex]) {
+//            cout<<"warunek spełniony"<<endl;
+
+            //Dodawanie krawędzi do MST_G
+            MST_G->adj[e->srcVertex].addEnd(e->destVertex, e->edgeWeight);
+            MST_G->adj[e->destVertex].addEnd(e->srcVertex, e->edgeWeight);
+            MST += e->edgeWeight;
+
+            //UNION (u, v)
+            //u -> srcVertex
+            //v -> destVertex
+            for(int j = 0; j < verticesNum; j++) {
+                if(groups[j] == groups[e->destVertex])
+                    groups[e->destVertex] = groups[e->srcVertex];
+            }
+
+            for(int j = 0; j < verticesNum; j++) {
+                if(groups[j] == e->destVertex)
+                    groups[j] = groups[e->srcVertex];
+            }
+        }
+    }
+
+    for(int i = 0; i < edgesNum; i++) {
+        delete edges[i];
+    }
+
+    delete [] edges;
+    delete [] groups;
+    return MST;
+}
+
+int AdjacencyList::findMin(const int *arr, const bool* visited, int length) {
+    int min = MAX_INT, minVertexNum;
+
+    for(int i = 0; i < length; i++) {
+        if(arr[i] < min && !visited[i]) {
+            min = arr[i];
+            minVertexNum = i;
+        }
+    }
+
+    return minVertexNum;
+}
+
+void AdjacencyList::findPath(const int *arr, int vertex) {
+    int p = arr[vertex];
+
+    if (p != -1) {
+        findPath(arr, p);
+    }
+
+    cout<<vertex<<" ";
+}
+
+

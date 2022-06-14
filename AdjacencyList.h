@@ -6,9 +6,19 @@
 #include <fstream>
 #include <cstdlib>
 #include <ctime>
+#include <algorithm>
 
 const int MAX_WEIGHT = 20;
 const int MAX_INT = 2147483626;
+
+struct EdgeAdjacencyList {
+    int destVertex;
+    int srcVertex;
+    int edgeWeight;
+
+    EdgeAdjacencyList(int srcVertex, int destVertex, int edgeWeight);
+    EdgeAdjacencyList() = default;
+};
 
 class AdjacencyList {
 public:
@@ -26,10 +36,10 @@ public:
     void generateRandomGraph(int vertices, int density, bool isDirected = true);
     void clear();
     void show();
-    void djikstraAdjacencyList(int start);
+    bool djikstraAdjacencyList(int start);
     bool bellmanFordAdjacencyList(int start);
     int primAdjacencyList(AdjacencyList* &A, int start);
-    int kruskalAdjacencyList(AdjacencyList* &A);
+    int kruskalAdjacencyList(AdjacencyList* &MST_G);
 };
 
 #endif

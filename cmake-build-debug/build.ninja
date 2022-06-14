@@ -67,6 +67,12 @@ build CMakeFiles/Projekt_2.dir/List.cpp.o: CXX_COMPILER__Projekt_2_Debug /Users/
   OBJECT_DIR = CMakeFiles/Projekt_2.dir
   OBJECT_FILE_DIR = CMakeFiles/Projekt_2.dir
 
+build CMakeFiles/Projekt_2.dir/IncidenceMatrix.cpp.o: CXX_COMPILER__Projekt_2_Debug /Users/marcinlenkiewicz/Desktop/Studia/SDiZO/Projekt_2/IncidenceMatrix.cpp || cmake_object_order_depends_target_Projekt_2
+  DEP_FILE = CMakeFiles/Projekt_2.dir/IncidenceMatrix.cpp.o.d
+  FLAGS = -g -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -std=gnu++11
+  OBJECT_DIR = CMakeFiles/Projekt_2.dir
+  OBJECT_FILE_DIR = CMakeFiles/Projekt_2.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target Projekt_2
@@ -75,7 +81,7 @@ build CMakeFiles/Projekt_2.dir/List.cpp.o: CXX_COMPILER__Projekt_2_Debug /Users/
 #############################################
 # Link the executable Projekt_2
 
-build Projekt_2: CXX_EXECUTABLE_LINKER__Projekt_2_Debug CMakeFiles/Projekt_2.dir/main.cpp.o CMakeFiles/Projekt_2.dir/AdjacencyList.cpp.o CMakeFiles/Projekt_2.dir/List.cpp.o
+build Projekt_2: CXX_EXECUTABLE_LINKER__Projekt_2_Debug CMakeFiles/Projekt_2.dir/main.cpp.o CMakeFiles/Projekt_2.dir/AdjacencyList.cpp.o CMakeFiles/Projekt_2.dir/List.cpp.o CMakeFiles/Projekt_2.dir/IncidenceMatrix.cpp.o
   FLAGS = -g -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15
   OBJECT_DIR = CMakeFiles/Projekt_2.dir
   POST_BUILD = :
