@@ -96,6 +96,11 @@ void IncidenceMatrix::show() {
 //        cout<<endl;
 //    }
 
+    if(A == nullptr) {
+        cout<<"Graf jest pusty."<<endl;
+        return;
+    }
+
     cout<<"            " << " " << " \t";
     for(int i = 0; i < edgesNum; i ++) {
         cout<<" "<<i<<"  \t";
@@ -115,6 +120,11 @@ void IncidenceMatrix::show() {
 }
 
 void IncidenceMatrix::generateRandomGraph(int vertices, int density, bool isDirected) {
+    if(vertices <= 0 || density < 0) {
+        cout<<"Wystąpił błąd, nie udało się stworzyć grafu."<<endl;
+        return;
+    }
+
     srand(time(nullptr));
     clear();
 
@@ -310,7 +320,7 @@ int IncidenceMatrix::primIncidenceMatrix(IncidenceMatrix *&MST_G, int start) {
     MST_G->edgesNum = verticesNum - 1;
     MST_G->A = new int * [verticesNum];
     for(int i = 0; i < verticesNum; i++) {
-        MST_G->A[i] = new int[edgesNum - 1]{};  // !
+        MST_G->A[i] = new int[verticesNum - 1]{};  // !
     }
 
 
@@ -353,13 +363,17 @@ int IncidenceMatrix::primIncidenceMatrix(IncidenceMatrix *&MST_G, int start) {
         MST += keys[i];
     }
 
-    for(int i = 1, eNum = 0; i < verticesNum; i++, eNum++) {
+    for(int i = 0, eNum = 0; i < verticesNum; i++) {
+        if(p[i] == - 1)
+            continue;
+
         vSrc = i;
         vDst = p[i];
         W = keys[i];
 
         MST_G->A[vSrc][eNum] = W;
         MST_G->A[vDst][eNum] = W;
+        eNum++;
     }
 
     delete [] alreadyVisited;
@@ -374,7 +388,7 @@ int IncidenceMatrix::kruskalIncidenceMatrix(IncidenceMatrix *&MST_G) {
     MST_G->edgesNum = verticesNum - 1;
     MST_G->A = new int * [verticesNum];
     for(int i = 0; i < verticesNum; i++) {
-        MST_G->A[i] = new int[edgesNum - 1]{}; // !
+        MST_G->A[i] = new int[verticesNum - 1]{}; // !
     }
 
     bool found = false;
@@ -414,29 +428,50 @@ int IncidenceMatrix::kruskalIncidenceMatrix(IncidenceMatrix *&MST_G) {
         }
     }
 
+//    for(int i = 0; i < edgesNum; i++)
+//        cout<<edges[i]->destVertex<<edges[i]->srcVertex<<edges[i]->edgeWeight<<endl;
+
     int eNum = 0;
 
     for(int i = 0; i < edgesNum; i++) {
         auto* e = edges[i];
 
+//        for(int j = 0; j < verticesNum; j++) {
+//            cout<<groups[j]<<endl;
+//        }
+//        cout<<"src: "<<edges[i]->srcVertex<<", dst: "<<edges[i]->destVertex<<", w = "<<edges[i]->edgeWeight<<endl;
+
+
         //FIND-SET(u) != FIND_SET(v)
         if(groups[e->srcVertex] != groups[e->destVertex]) {
+//            cout<<"warunek spełniony"<<endl<<endl;
             //Dodawanie krawędzi do MST_G
             MST_G->A[e->srcVertex][eNum] = e->edgeWeight;
             MST_G->A[e->destVertex][eNum++] = e->edgeWeight;
             MST += e->edgeWeight;
 
+
+//            for(int j = 0; j < verticesNum; j++) {
+//                if(groups[j] == groups[e->destVertex])
+//                    groups[e->destVertex] = groups[e->srcVertex];
+//            }
+//
+//            for(int j = 0; j < verticesNum; j++) {
+//                if(groups[j] == e->destVertex)
+//                    groups[j] = groups[e->srcVertex];
+//            }
+
             //UNION (u, v)
             //u -> srcVertex
             //v -> destVertex
-            for(int j = 0; j < verticesNum; j++) {
-                if(groups[j] == groups[e->destVertex])
-                    groups[e->destVertex] = groups[e->srcVertex];
-            }
+            int changeTo = e->srcVertex;
+            int changeFrom = e->destVertex;
+            int temp = groups[changeFrom];
 
             for(int j = 0; j < verticesNum; j++) {
-                if(groups[j] == e->destVertex)
-                    groups[j] = groups[e->srcVertex];
+                if(groups[j] == temp) {
+                    groups[j] = groups[changeTo];
+                }
             }
         }
     }

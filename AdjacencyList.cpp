@@ -86,6 +86,12 @@ void AdjacencyList::show() {
 }
 
 void AdjacencyList::generateRandomGraph(int vertices, int density, bool isDirected) {
+    if(vertices <= 0 || density < 0) {
+        cout<<"Wystąpił błąd, nie udało się stworzyć grafu."<<endl;
+        return;
+    }
+
+
     srand(time(nullptr));
     clear();
     verticesNum = vertices;
@@ -311,7 +317,10 @@ int AdjacencyList::primAdjacencyList(AdjacencyList* &A, int start) {
         MST += keys[i];
     }
 
-    for(int i = 1; i < verticesNum; i++) {
+    for(int i = 0; i < verticesNum; i++) {
+        if(p[i] == - 1)
+            continue;
+
         vSrc = i;
         vDst = p[i];
         W = keys[i];
@@ -365,15 +374,6 @@ int AdjacencyList::kruskalAdjacencyList(AdjacencyList *&MST_G) {
         }
     }
 
-//    for(int j = 0; j < edgesNum; j++) {
-//        auto* e = edges[j];
-//
-//        cout<<"vSrc = "<<e->srcVertex + 1 <<", vDsc = "<<e->destVertex+ 1<<", w: "<< e->edgeWeight<<endl;
-//    }
-
-
-
-
     for(int i = 0; i < edgesNum; i++) {
 
 //        for(int j = 0; j < verticesNum; j++)
@@ -391,17 +391,27 @@ int AdjacencyList::kruskalAdjacencyList(AdjacencyList *&MST_G) {
             MST_G->adj[e->destVertex].addEnd(e->srcVertex, e->edgeWeight);
             MST += e->edgeWeight;
 
+//            for(int j = 0; j < verticesNum; j++) {
+//                if(groups[j] == groups[e->destVertex])
+//                    groups[e->destVertex] = groups[e->srcVertex];
+//            }
+//
+//            for(int j = 0; j < verticesNum; j++) {
+//                if(groups[j] == e->destVertex)
+//                    groups[j] = groups[e->srcVertex];
+//            }
+
             //UNION (u, v)
             //u -> srcVertex
             //v -> destVertex
-            for(int j = 0; j < verticesNum; j++) {
-                if(groups[j] == groups[e->destVertex])
-                    groups[e->destVertex] = groups[e->srcVertex];
-            }
+            int changeTo = e->srcVertex;
+            int changeFrom = e->destVertex;
+            int temp = groups[changeFrom];
 
             for(int j = 0; j < verticesNum; j++) {
-                if(groups[j] == e->destVertex)
-                    groups[j] = groups[e->srcVertex];
+                if(groups[j] == temp) {
+                    groups[j] = groups[changeTo];
+                }
             }
         }
     }
@@ -437,5 +447,3 @@ void AdjacencyList::findPath(const int *arr, int vertex) {
 
     cout<<vertex<<" ";
 }
-
-
