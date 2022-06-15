@@ -5,7 +5,7 @@
 #include <fstream>
 #include <algorithm>
 
-const int MAX_WEIGHT_M = 200;
+const int MAX_WEIGHT_M = 20;
 const int MAX_INT_M = 2147483626;
 
 struct EdgeIncidenceMatrix {
@@ -14,7 +14,7 @@ struct EdgeIncidenceMatrix {
     int edgeWeight;
 
     EdgeIncidenceMatrix(int srcVertex, int destVertex, int edgeWeight);
-    EdgeIncidenceMatrix() {};
+    EdgeIncidenceMatrix() = default;
 };
 
 class IncidenceMatrix {

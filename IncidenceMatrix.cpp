@@ -272,13 +272,17 @@ bool IncidenceMatrix::bellmanFordIncidenceMatrix(int start) {
 
     for (int i = 0; i < verticesNum - 1 && changeOccurred; i++) {
         changeOccurred = false;
-        for(int j = 0; j < verticesNum; j ++) {                     //j -> srcV
+        for(int j = 0; j < verticesNum; j++) {                     //j -> srcV
             for (int k = 0; k < edgesNum; k++) {                    //k -> edges counter
                 if (A[j][k] > 0) {
                     for (int m = 0; m < verticesNum; m++) {
                         if (A[m][k] != 0 && m != j) {
                             int v = m;
                             int w = -A[m][k];
+
+//                            if(p[start] != -1) {
+//                                cout<<v<<" "<<j<<" "<<w<<endl;
+//                            }
 
                             if (d[v] > d[j] + w) {
                                 d[v] = d[j] + w;
