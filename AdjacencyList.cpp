@@ -97,6 +97,7 @@ void AdjacencyList::generateRandomGraph(int vertices, int density, bool isDirect
     verticesNum = vertices;
     adj = new List[verticesNum];
 
+    // Wyliczenie krawędzi na podstawie liczby wierzchołków i gęstości.
     int edges = vertices * (vertices - 1);
     if(!isDirected)
         edges = edges / 2;
@@ -106,6 +107,7 @@ void AdjacencyList::generateRandomGraph(int vertices, int density, bool isDirect
 
     int randV, randV_dst,randW;
 
+    // Zapewnienie spójności.
     for(int i = 1; i < vertices; i++) {
         randV = rand() % i;
         randW = rand() % MAX_WEIGHT + 1;
@@ -120,28 +122,8 @@ void AdjacencyList::generateRandomGraph(int vertices, int density, bool isDirect
 
         edges--;
     }
-//    while(edges-- > 0) {
-//        cout<<d++<<endl;
-//        randW = rand() % MAX_WEIGHT + 1;
-//        randV = rand() % vertices;      //src vertex
-//        randV_dst = rand() % vertices;
-//
-//        while(randV_dst == randV)
-//            randV_dst = rand() % vertices;
-//
-//        while(adj[randV].search(randV_dst) != nullptr) {
-//            randV_dst = rand() % vertices;
-//
-//            while(randV_dst == randV)
-//                randV_dst = rand() % vertices;
-//
-//        }
-//        adj[randV].addEnd(randV_dst, randW);
-//
-//        if (!isDirected)
-//            adj[randV_dst].addEnd(randV, randW);
-//    }
 
+    // Generowanie pozostałych krawędzi.
     while(edges > 0) {
         randW = rand() % MAX_WEIGHT + 1;
         randV = rand() % vertices;      //src vertex
@@ -224,6 +206,11 @@ bool AdjacencyList::bellmanFordAdjacencyList(int start) {
 
     int* d = new int[verticesNum];
     int* p = new int[verticesNum];
+
+    // Zmienna logiczna służąca do przechowywania informacji czy podczas
+    // wykonywania iteracji pętli zaszła jakaś zmiana w tablicach d i p.
+    // Jeśli w pętli nie zaszła zmiana, można przerwać działanie pętli, przez co skracamy
+    // czas działania.
     bool changeOccurred = true;
 
     for(int i = 0; i < verticesNum; i++) {
@@ -233,7 +220,6 @@ bool AdjacencyList::bellmanFordAdjacencyList(int start) {
 
     d[start] = 0;
 
-
     for (int i = 0; i < verticesNum - 1 && changeOccurred; i++) {
         changeOccurred = false;
         for(int j = 0; j < verticesNum; j++) {
@@ -242,11 +228,7 @@ bool AdjacencyList::bellmanFordAdjacencyList(int start) {
                 int v = e->destVertex;
                 int w = e->edgeWeight;
 
-//                cout<<"v = "<<v<<", w = "<<w<<endl;
-//                cout<<"d[v]: "<< d[v] << ",\t d[j] + w: " << d[j] << " + " << w <<endl;
-
                 if(d[v] > d[j] + w) {
-//                    cout<<"warunek spelniony"<<endl;
                     d[v] = d[j] + w;
                     p[v] = j;
                     changeOccurred = true;
@@ -336,7 +318,6 @@ int AdjacencyList::primAdjacencyList(AdjacencyList* &A, int start) {
     return MST;
 }
 
-// Dokończyć
 int AdjacencyList::kruskalAdjacencyList(AdjacencyList *&MST_G) {
     MST_G->verticesNum = verticesNum;
     MST_G->edgesNum = verticesNum - 1;
@@ -358,6 +339,7 @@ int AdjacencyList::kruskalAdjacencyList(AdjacencyList *&MST_G) {
             vDst = le->destVertex;
             w = le->edgeWeight;
 
+            // Warunek zapewniający, że w grafie nieskierowanym dana krawędź zostanie dodane tylko raz.
             if(vSrc < vDst) {
                 auto* e = new EdgeAdjacencyList(vSrc, vDst, w);
                 edges[eNum++] = e;
@@ -365,7 +347,8 @@ int AdjacencyList::kruskalAdjacencyList(AdjacencyList *&MST_G) {
         }
     }
 
-
+    // Sortowanie krawędzi po wadze.
+    // Zastosowano sortowanie bąbelkowe.
     for(int i = 0; i < edgesNum; i++) {
         for(int j = 1; j < edgesNum - i; j++) {
             if(edges[j-1]->edgeWeight > edges[j]->edgeWeight) {
@@ -375,31 +358,15 @@ int AdjacencyList::kruskalAdjacencyList(AdjacencyList *&MST_G) {
     }
 
     for(int i = 0; i < edgesNum; i++) {
-
-//        for(int j = 0; j < verticesNum; j++)
-//            cout<<groups[j]<<endl;
-
         auto* e = edges[i];
 
-//        cout<<"vSrc = "<<e->srcVertex<<", vDsc = "<<e->destVertex<<", w: "<< e->edgeWeight<<endl;
         //FIND-SET(u) != FIND_SET(v)
         if(groups[e->srcVertex] != groups[e->destVertex]) {
-//            cout<<"warunek spełniony"<<endl;
 
             //Dodawanie krawędzi do MST_G
             MST_G->adj[e->srcVertex].addEnd(e->destVertex, e->edgeWeight);
             MST_G->adj[e->destVertex].addEnd(e->srcVertex, e->edgeWeight);
             MST += e->edgeWeight;
-
-//            for(int j = 0; j < verticesNum; j++) {
-//                if(groups[j] == groups[e->destVertex])
-//                    groups[e->destVertex] = groups[e->srcVertex];
-//            }
-//
-//            for(int j = 0; j < verticesNum; j++) {
-//                if(groups[j] == e->destVertex)
-//                    groups[j] = groups[e->srcVertex];
-//            }
 
             //UNION (u, v)
             //u -> srcVertex
@@ -438,6 +405,7 @@ int AdjacencyList::findMin(const int *arr, const bool* visited, int length) {
     return minVertexNum;
 }
 
+// Funkcja działa na zasadzie p[p[p[...p[v]]]].
 void AdjacencyList::findPath(const int *arr, int vertex) {
     int p = arr[vertex];
 

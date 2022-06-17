@@ -47,6 +47,15 @@ bool IncidenceMatrix::makeFromFile(const char *name, bool isDirected) {
         A[vDst][count] = isDirected ? -w : w;
         count++;
     }
+    if (inFile.eof()) {
+        cout<<"Wczytywanie danych zakończone."<<endl;
+    } else if(inFile.fail()) {
+        cout<<"Wczytywanie danych przerwane, nie udało się wczytać pliku."<<endl;
+    } else {
+        cout<<"Wczytywanie danych przerwane."<<endl;
+    }
+
+    inFile.close();
 
     return false;
 }
@@ -66,36 +75,6 @@ void IncidenceMatrix::clear() {
 }
 
 void IncidenceMatrix::show() {
-//    int vSrc = -1, vDst = 0, w;
-//
-//    if (verticesNum == 0) {
-//        cout<<"Lista jest pusta."<<endl;
-//        return;
-//    }
-//
-//    cout<<"Liczba wierzchołków: " << verticesNum << endl;
-//    cout<<"Liczba krawędzi: " << edgesNum << endl;
-//
-//    for(int i = 0; i < verticesNum; i++) {
-//        cout<<"Wierzchołek " << i << ":\t";
-//        for(int j = 0; j < edgesNum; j++) {
-//            for(int k = 0; k < verticesNum; k++) {
-//                if(A[k][j] > 0 && k == i) {
-//                    vSrc = k;
-//                    w = A[k][j];
-//                } else if(A[k][j] != 0) {
-//                    vDst = k;
-//                }
-//            }
-//            if (vSrc != -1) {
-//                cout << "(" << vDst << "," << w << ")\t";
-//            }
-//            vSrc = -1;
-//        }
-//
-//        cout<<endl;
-//    }
-
     if(A == nullptr) {
         cout<<"Graf jest pusty."<<endl;
         return;
@@ -128,6 +107,7 @@ void IncidenceMatrix::generateRandomGraph(int vertices, int density, bool isDire
     srand(time(nullptr));
     clear();
 
+    // Wyliczenie krawędzi na podstawie liczby wierzchołków i gęstości.
     int edges = vertices * (vertices - 1);
     if(!isDirected)
         edges = edges / 2;
@@ -142,6 +122,8 @@ void IncidenceMatrix::generateRandomGraph(int vertices, int density, bool isDire
     }
 
     int randV, randV_dst,randW, eNum = 0;
+
+    // Zapewnienie spójności.
     for(int i = 1; i < vertices; i++) {
         randV = rand() % i;
         randW = rand() % MAX_WEIGHT_M + 1;
@@ -167,7 +149,7 @@ void IncidenceMatrix::generateRandomGraph(int vertices, int density, bool isDire
         }
     }
 
-
+    // Generowanie pozostałych krawędzi.
     while(edges > 0) {
         randW = rand() % MAX_WEIGHT_M + 1;
         randV = rand() % vertices;      //src vertex
@@ -272,17 +254,13 @@ bool IncidenceMatrix::bellmanFordIncidenceMatrix(int start) {
 
     for (int i = 0; i < verticesNum - 1 && changeOccurred; i++) {
         changeOccurred = false;
-        for(int j = 0; j < verticesNum; j++) {                     //j -> srcV
-            for (int k = 0; k < edgesNum; k++) {                    //k -> edges counter
-                if (A[j][k] > 0) {
+        for(int j = 0; j < verticesNum; j++) {                     // j -> wierzchołek początkowy
+            for (int k = 0; k < edgesNum; k++) {                   // k -> licznik krawędzi
+                if (A[j][k] > 0) {                                 // m -> wierzchołek końcowy
                     for (int m = 0; m < verticesNum; m++) {
                         if (A[m][k] != 0 && m != j) {
                             int v = m;
                             int w = -A[m][k];
-
-//                            if(p[start] != -1) {
-//                                cout<<v<<" "<<j<<" "<<w<<endl;
-//                            }
 
                             if (d[v] > d[j] + w) {
                                 d[v] = d[j] + w;
@@ -324,7 +302,7 @@ int IncidenceMatrix::primIncidenceMatrix(IncidenceMatrix *&MST_G, int start) {
     MST_G->edgesNum = verticesNum - 1;
     MST_G->A = new int * [verticesNum];
     for(int i = 0; i < verticesNum; i++) {
-        MST_G->A[i] = new int[verticesNum - 1]{};  // !
+        MST_G->A[i] = new int[verticesNum - 1]{};
     }
 
 
@@ -432,38 +410,20 @@ int IncidenceMatrix::kruskalIncidenceMatrix(IncidenceMatrix *&MST_G) {
         }
     }
 
-//    for(int i = 0; i < edgesNum; i++)
-//        cout<<edges[i]->destVertex<<edges[i]->srcVertex<<edges[i]->edgeWeight<<endl;
 
     int eNum = 0;
 
     for(int i = 0; i < edgesNum; i++) {
         auto* e = edges[i];
 
-//        for(int j = 0; j < verticesNum; j++) {
-//            cout<<groups[j]<<endl;
-//        }
-//        cout<<"src: "<<edges[i]->srcVertex<<", dst: "<<edges[i]->destVertex<<", w = "<<edges[i]->edgeWeight<<endl;
-
 
         //FIND-SET(u) != FIND_SET(v)
         if(groups[e->srcVertex] != groups[e->destVertex]) {
-//            cout<<"warunek spełniony"<<endl<<endl;
+
             //Dodawanie krawędzi do MST_G
             MST_G->A[e->srcVertex][eNum] = e->edgeWeight;
             MST_G->A[e->destVertex][eNum++] = e->edgeWeight;
             MST += e->edgeWeight;
-
-
-//            for(int j = 0; j < verticesNum; j++) {
-//                if(groups[j] == groups[e->destVertex])
-//                    groups[e->destVertex] = groups[e->srcVertex];
-//            }
-//
-//            for(int j = 0; j < verticesNum; j++) {
-//                if(groups[j] == e->destVertex)
-//                    groups[j] = groups[e->srcVertex];
-//            }
 
             //UNION (u, v)
             //u -> srcVertex

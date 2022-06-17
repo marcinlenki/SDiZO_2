@@ -59,6 +59,104 @@ int main() {
     bool quit = false, changeProblem = false, changeStruct = false;
     int choiceProblem, choiceStruct, choiceOptions, verticesNum = 0, density = 0, MST;
 
+
+//                          PROCEDURA MIERZENIA CZASU
+
+//    adjacencyList = new AdjacencyList();
+//    incidenceMatrix = new IncidenceMatrix();
+//    MST_list = new AdjacencyList();
+//    MST_matrix = new IncidenceMatrix();
+//
+//
+//    int vertices [5]{10,15,25,50, 100};
+//    int densityT;
+//    long long sum;
+//
+//    for(int vN = 0; vN < 5; vN++) {
+//        cout << "POMIAR " << vN << endl << endl;
+//        // POMIAR 1
+//        densityT = 25;
+//        sum = 0;
+//        for (int i = 0; i < 100; i++) {
+//            incidenceMatrix->generateRandomGraph(vertices[vN], densityT, false);
+//            // Start measuring time
+//            auto begin = std::chrono::high_resolution_clock::now();
+//
+//            incidenceMatrix->kruskalIncidenceMatrix(MST_matrix);
+//
+//            // Stop measuring time and calculate the elapsed time
+//            auto end = std::chrono::high_resolution_clock::now();
+//            auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+//            sum += elapsed.count();
+//        }
+//        cout << "Czas w ns dla liczby wierzchołków = " << vertices[vN] << " i gęstości = " << densityT << ":  " << sum / 100
+//             << endl;
+//
+//        // POMIAR 2
+//        densityT = 50;
+//        sum = 0;
+//        for (int i = 0; i < 100; i++) {
+//            incidenceMatrix->generateRandomGraph(vertices[vN], densityT, false);
+//            // Start measuring time
+//            auto begin = std::chrono::high_resolution_clock::now();
+//
+//            incidenceMatrix->kruskalIncidenceMatrix(MST_matrix);
+//
+//            // Stop measuring time and calculate the elapsed time
+//            auto end = std::chrono::high_resolution_clock::now();
+//            auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+//            sum += elapsed.count();
+//        }
+//        cout << "Czas w ns dla liczby wierzchołków = " << vertices[vN] << " i gęstości = " << densityT << ":  " << sum / 100
+//             << endl;
+//
+//
+//        // POMIAR 3
+//        densityT = 75;
+//        sum = 0;
+//        for (int i = 0; i < 100; i++) {
+//            incidenceMatrix->generateRandomGraph(vertices[vN], densityT, false);
+//            // Start measuring time
+//            auto begin = std::chrono::high_resolution_clock::now();
+//
+//            incidenceMatrix->kruskalIncidenceMatrix(MST_matrix);
+//
+//            // Stop measuring time and calculate the elapsed time
+//            auto end = std::chrono::high_resolution_clock::now();
+//            auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+//            sum += elapsed.count();
+//        }
+//        cout << "Czas w ns dla liczby wierzchołków = " << vertices[vN] << " i gęstości = " << densityT << ":  " << sum / 100
+//             << endl;
+//
+//
+//        // POMIAR 4
+//        densityT = 99;
+//        sum = 0;
+//        for (int i = 0; i < 100; i++) {
+//            incidenceMatrix->generateRandomGraph(vertices[vN], densityT, false);
+//            // Start measuring time
+//            auto begin = std::chrono::high_resolution_clock::now();
+//
+//            incidenceMatrix->kruskalIncidenceMatrix(MST_matrix);
+//
+//            // Stop measuring time and calculate the elapsed time
+//            auto end = std::chrono::high_resolution_clock::now();
+//            auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+//            sum += elapsed.count();
+//        }
+//        cout << "Czas w ns dla liczby wierzchołków = " << vertices[vN] << " i gęstości = " << densityT << ":  " << sum / 100
+//             << endl;
+//
+//        cout<<endl<<endl;
+//    }
+//
+//    delete MST_matrix;
+//    delete MST_list;
+//    delete incidenceMatrix;
+//    delete adjacencyList;
+
+
     while(!quit) {
         mainMenu();
         cin >> choiceProblem;
@@ -126,6 +224,8 @@ int main() {
                                         break;
                                     case 6:
                                         changeStruct = true;
+                                        delete incidenceMatrix;
+                                        delete MST_matrix;
                                         break;
                                     default:
                                         cout<<"Wybrano niewłaściwą opcję."<<endl;
@@ -186,6 +286,8 @@ int main() {
                                         break;
                                     case 6:
                                         changeStruct = true;
+                                        delete adjacencyList;
+                                        delete MST_list;
                                         break;
                                     default:
                                         cout<<"Wybrano niewłaściwą opcję."<<endl;
@@ -259,6 +361,8 @@ int main() {
                                         break;
                                     case 6:
                                         changeStruct = true;
+                                        delete incidenceMatrix;
+                                        delete MST_matrix;
                                         break;
                                     default:
                                         cout << "Wybrano niewłaściwą opcję." << endl;
@@ -313,6 +417,8 @@ int main() {
                                         break;
                                     case 6:
                                         changeStruct = true;
+                                        delete adjacencyList;
+                                        delete MST_list;
                                         break;
                                     default:
                                         cout << "Wybrano niewłaściwą opcję." << endl;

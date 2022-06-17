@@ -1,3 +1,8 @@
+/*
+ * Klasa implementująca działanie listy dwukierunkowej.
+ * Stworzona podczas pierwszego projektu.
+ * Klasa została lekko zmodyfikowana na potrzebę tego projektu.
+ */
 #ifndef PROJEKT_LISTA_H
 #define PROJEKT_LISTA_H
 
